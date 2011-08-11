@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core network
+QT       += core gui network
 
 TARGET = dumpz
 CONFIG   += console
@@ -16,3 +16,6 @@ INSTALLS=target
 
 
 SOURCES += main.cpp
+
+HEADERS += \
+    utils.h
