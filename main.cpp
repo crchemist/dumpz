@@ -1,12 +1,21 @@
 #include <QDebug>
+#include <QObject>
 #include <QtCore/QCoreApplication>
 #include <QApplication>
 #include <QClipboard>
 #include <QtNetwork>
 
+class DumpzService: public QObject {
+    Q_OBJECT
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
+    public:
+        DumpzService();
+
+        QString postDump(QString data);
+};
+
+QString DumpzService::postDump(QString data) {
+    QString url;
     QByteArray data;
     QUrl params;
 
@@ -16,9 +25,6 @@ int main(int argc, char *argv[]) {
     manager = new QNetworkAccessManager();
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
-    QClipboard *clipboard = QApplication::clipboard();
-    QString clip_text = clipboard->text();
-
     params.addQueryItem("lexer", "text");
     params.addQueryItem("code", clip_text);
     data.append(params.toString());
@@ -26,9 +32,16 @@ int main(int argc, char *argv[]) {
 
     QNetworkReply *reply = manager->post(request, data);
 
-
     qDebug() << reply->bytesAvailable();
 
+    return url;
+};
 
-    return 0;
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    QClipboard *clipboard = QApplication::clipboard();
+    QString clip_text = clipboard->text();
+
+    return app.exec();
 }
