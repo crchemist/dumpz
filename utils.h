@@ -53,9 +53,10 @@ public slots:
     {
         QByteArray location = reply->rawHeader("Location");
 
-        // put url to script
+        // put url to terminal
         std::cout << ((QString) location).toStdString();
 
+        // put url to clipboard
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText((QString) location);
 
