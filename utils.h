@@ -1,12 +1,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <iostream>
+
 #include <QDebug>
 #include <QObject>
 #include <QClipboard>
 #include <QtNetwork>
 #include <QCoreApplication>
 #include <QApplication>
+
 
 class DumpzService: public QObject
 {
@@ -33,7 +36,8 @@ public:
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
         params.addQueryItem("lexer", "text");
-        params.addQueryItem("code", text);
+        params.addQueryItem("code", QUrl::toPercentEncoding(text));
+
         data.append(params.toString());
         data.remove(0, 1);
 
@@ -47,7 +51,14 @@ public:
 public slots:
     void responseReceived()
     {
-        qDebug() << reply->error();
+        QByteArray location = reply->rawHeader("Location");
+
+        // put url to script
+        std::cout << ((QString) location).toStdString();
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText((QString) location);
+
         QApplication::quit();
     }
 };
